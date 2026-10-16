@@ -1,0 +1,21 @@
+[package]
+name = "primesound-cli"
+description = "PrimeSound command line: headless editing, conversion, bounce, MCP server, app control"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[[bin]]
+name = "primesound-cli"
+path = "src/main.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+primesound-engine.workspace = true
+primesound-automation.workspace = true
+primesound-audio-io.workspace = true
+primesound-dsp.workspace = true
+serde_json.workspace = true

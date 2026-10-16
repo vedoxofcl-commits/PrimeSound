@@ -1,0 +1,38 @@
+[package]
+name = "primesound-ui-egui"
+description = "PrimeSound's egui user interface: Edit and Mix windows, transport, dialogs, control channel"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version = "1.95"
+repository.workspace = true
+
+[dependencies]
+craft-ui.workspace = true
+primesound-time.workspace = true
+primesound-audio-io.workspace = true
+primesound-midi.workspace = true
+primesound-dsp.workspace = true
+primesound-clap-host.workspace = true
+primesound-vst3-host.workspace = true
+primesound-au-host.workspace = true
+primesound-model.workspace = true
+primesound-mix.workspace = true
+primesound-engine.workspace = true
+primesound-playback.workspace = true
+primesound-video.workspace = true
+egui.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+log.workspace = true
+image.workspace = true
+
+[dev-dependencies]
+egui_kittest = { workspace = true, features = ["wgpu", "snapshot"] }
+
+[lints]
+workspace = true
+
+[build-dependencies]
+serde_json = { workspace = true }
+toml = "1"

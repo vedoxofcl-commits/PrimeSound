@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  PrimeSound MSI (WiX Toolset v5: `dotnet tool install -g wix`). Built by package.ps1:
+
+    wix build primesound.wxs -arch x64 -d Version=1.2.3 -d BinDir=... -d IconPath=... -o out.msi
+
+  Per-machine install into Program Files, a Start Menu shortcut, `.scraft` sessions owned by
+  PrimeSound, and PrimeSound offered under "Open with" for WAV/AIFF/FLAC/MP3 and MIDI files
+  (without taking over the user's default player for them).
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package
+      Name="PrimeSound"
+      Manufacturer="Learning Machines LLC"
+      Version="$(var.Version)"
+      UpgradeCode="EE53D3E5-D0AE-40F9-808D-9417FDEBF61A"
+      Scope="perMachine"
+      Compressed="yes"
+      Language="1033">
+    <SummaryInformation Description="PrimeSound digital audio workstation" Manufacturer="Learning Machines LLC" />
+    <!-- Same-version upgrades let successive pre-releases of one X.Y.Z replace each other
+         (MSI versions are numeric, so 1.2.3-rc.1 and 1.2.3-rc.2 are both 1.2.3). -->
+    <MajorUpgrade AllowSameVersionUpgrades="yes"
+        DowngradeErrorMessage="A newer version of PrimeSound is already installed." />
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+    <Icon Id="PrimesoundIcon.ico" SourceFile="$(var.IconPath)" />
+    <Property Id="ARPPRODUCTICON" Value="PrimesoundIcon.ico" />
+    <Property Id="ARPURLINFOABOUT" Value="https://getartcraft.com/apps/primesound" />
+    <Property Id="ARPURLUPDATEINFO" Value="https://getartcraft.com/apps/primesound" />
+    <Property Id="ARPHELPLINK" Value="https://discord.gg/artcraft" />
+
+    <StandardDirectory Id="ProgramFiles6432Folder">
+      <Directory Id="INSTALLFOLDER" Name="PrimeSound" />
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder" />
+
+    <Feature Id="Main" Title="PrimeSound" Level="1">
+      <ComponentGroupRef Id="PrimesoundFiles" />
+    </Feature>
+  </Package>
+
+  <Fragment>
+    <ComponentGroup Id="PrimesoundFiles" Directory="INSTALLFOLDER">
+      <Component Id="PrimesoundApp" Guid="091136D7-205E-41A8-9D27-5E231F7CBBD4">
+        <File Id="PrimesoundExe" Source="$(var.BinDir)\primesound.exe" KeyPath="yes">
+          <Shortcut Id="StartMenuShortcut" Directory="ProgramMenuFolder" Name="PrimeSound"
+              Description="PrimeSound digital audio workstation" WorkingDirectory="INSTALLFOLDER" Advertise="yes"
+              Icon="PrimesoundIcon.ico" IconIndex="0" />
+        </File>
+
+        <!-- .scraft: PrimeSound's own session format; PrimeSound is its default app. -->
+        <ProgId Id="PrimeSound.Session" Description="PrimeSound Session" Icon="PrimesoundExe" IconIndex="0">
+          <Extension Id="scraft" ContentType="application/x-primesound-session">
+            <Verb Id="open" Command="Open" TargetFile="PrimesoundExe" Argument="&quot;%1&quot;" />
+          </Extension>
+        </ProgId>
+        <!-- Audio and MIDI files: offered under "Open with" (imported into a session), never forced
+             as the default. -->
+        <ProgId Id="PrimeSound.Audio" Description="Audio File" Icon="PrimesoundExe" IconIndex="0" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\PrimeSound.Audio\shell\open\command" Value="&quot;[#PrimesoundExe]&quot; &quot;%1&quot;" Type="string" />
+        <ProgId Id="PrimeSound.Midi" Description="MIDI File" Icon="PrimesoundExe" IconIndex="0" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\PrimeSound.Midi\shell\open\command" Value="&quot;[#PrimesoundExe]&quot; &quot;%1&quot;" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\.wav\OpenWithProgids" Name="PrimeSound.Audio" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\.aif\OpenWithProgids" Name="PrimeSound.Audio" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\.aiff\OpenWithProgids" Name="PrimeSound.Audio" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\.flac\OpenWithProgids" Name="PrimeSound.Audio" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\.mp3\OpenWithProgids" Name="PrimeSound.Audio" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\.mid\OpenWithProgids" Name="PrimeSound.Midi" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\.midi\OpenWithProgids" Name="PrimeSound.Midi" Value="" Type="string" />
+
+        <!-- "Open with" app list and the Run dialog (Win+R "primesound"). -->
+        <RegistryValue Root="HKLM" Key="Software\Classes\Applications\primesound.exe" Name="FriendlyAppName" Value="PrimeSound" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Applications\primesound.exe\shell\open\command" Value="&quot;[#PrimesoundExe]&quot; &quot;%1&quot;" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Applications\primesound.exe\SupportedTypes" Name=".scraft" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Applications\primesound.exe\SupportedTypes" Name=".wav" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Applications\primesound.exe\SupportedTypes" Name=".aif" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Applications\primesound.exe\SupportedTypes" Name=".aiff" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Applications\primesound.exe\SupportedTypes" Name=".flac" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Applications\primesound.exe\SupportedTypes" Name=".mp3" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Applications\primesound.exe\SupportedTypes" Name=".mid" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Applications\primesound.exe\SupportedTypes" Name=".midi" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\App Paths\primesound.exe" Value="[#PrimesoundExe]" Type="string" />
+      </Component>
+
+      <Component Id="PrimesoundCli" Guid="4552049A-C2F0-4AB0-BAE6-A62C3348F4B4">
+        <File Id="PrimesoundCliExe" Source="$(var.BinDir)\primesound-cli.exe" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

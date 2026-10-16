@@ -1,0 +1,34 @@
+[package]
+name = "primesound-playback"
+description = "PrimeSound audio device I/O: realtime playback and recording through the mix engine"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+
+[dependencies]
+primesound-time.workspace = true
+primesound-audio-io.workspace = true
+primesound-model.workspace = true
+primesound-mix.workspace = true
+primesound-dsp.workspace = true
+log.workspace = true
+serde.workspace = true
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+cpal.workspace = true
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+cpal = { workspace = true, features = ["wasm-bindgen"] }
+
+[features]
+# ASIO on Windows (cpal's ASIO host). Off by default: building it downloads Steinberg's ASIO SDK
+# (its own licence) and needs LLVM (libclang) for the bindings. `cargo build -p primesound --features asio`.
+asio = ["cpal/asio"]
+
+[dev-dependencies]
+serde_json.workspace = true
+
+[lints]
+workspace = true

@@ -1,0 +1,31 @@
+[package]
+name = "primesound-engine"
+description = "PrimeSound command engine: commands, undo, editing operations, import/export, bounce, parity catalog"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+
+[dependencies]
+primesound-time.workspace = true
+primesound-audio-io.workspace = true
+primesound-midi.workspace = true
+primesound-dsp.workspace = true
+primesound-clap-host.workspace = true
+primesound-vst3-host.workspace = true
+primesound-au-host.workspace = true
+primesound-model.workspace = true
+primesound-mix.workspace = true
+primesound-video.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+log.workspace = true
+zip.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true
+
+[lints]
+workspace = true
